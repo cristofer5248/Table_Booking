@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: Edge-service
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
+    cache: false
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      orderService:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10000
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 2
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+server:
+  port: 8081

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Edge-Service/Edge-Service.iml" filepath="$PROJECT_DIR$/Edge-Service/Edge-Service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/celupaz/celupaz.iml" filepath="$PROJECT_DIR$/celupaz/celupaz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/primero.iml" filepath="$PROJECT_DIR$/.idea/primero.iml" />
+    </modules>
+  </component>
+</project>
