@@ -1,4 +1,4 @@
-var cfg = {
+/*var cfg = {
     tables: [
       {
         id:'A',
@@ -35,7 +35,7 @@ var cfg = {
       'D4':'Anita'
     }
   }
-
+*/
 
   initboard();
 

@@ -1,9 +1,13 @@
 package com.chrisgeek.celupaz.entities;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,10 +20,14 @@ public class Rsvp {
     @Column(name = "rsvp_id")
     private Long Id;
 
-    @Column(name = "seat_id")
-    private int seatId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "seat_id")
+    private Seat seatId;
 
     @Column(name ="customer_name", length = 100)
     private String customerName;
+
+
 
 }

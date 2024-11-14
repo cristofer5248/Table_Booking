@@ -2,6 +2,7 @@ package com.chrisgeek.Edge.Service.interfaces;
 
 import com.chrisgeek.Edge.Service.entities.Car;
 import com.chrisgeek.Edge.Service.entities.Mesa;
+import com.chrisgeek.Edge.Service.entities.Rsvp;
 import com.chrisgeek.Edge.Service.entities.Seat;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.hateoas.CollectionModel;
@@ -37,8 +38,8 @@ public interface CarClient {
     @CrossOrigin
     CollectionModel<Seat> generarMesasCol();
 
-    @GetMapping("/rsvps")
+    @GetMapping("/verReservados")
     @CrossOrigin
-    CollectionModel<Seat> obtenerReservados();
+    List<Rsvp> obtenerReservados();
 }
 

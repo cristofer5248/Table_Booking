@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.chrisgeek.Edge.Service.entities.Mesa;
+import com.chrisgeek.Edge.Service.entities.Rsvp;
 import com.chrisgeek.Edge.Service.entities.Seat;
 import com.chrisgeek.Edge.Service.interfaces.CarClient;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,10 @@ public class MesasUIController {
 
     @GetMapping("/vermesasDisponibles")
     public String mesasDisponibles(Model model){
-        //StringBuilder mesasFinal = new StringBuilder();
+        // Usar StringBuilder para construir la cadena de resultados
+        StringBuilder mesasFinal = new StringBuilder();
+        mesasFinal.append("var cfg = {\n tables: [");
+
         System.out.println("Mesas disponibles");
         List<Seat> seats =  mesaClient.generarMesas();
         Set<String> mesas = seats.stream()
@@ -51,8 +55,7 @@ public class MesasUIController {
             }
         });
 
-        // Usar StringBuilder para construir la cadena de resultados
-        StringBuilder mesasFinal = new StringBuilder();
+
         asientosPorMesa.forEach((mesa, detalles) -> {
             System.out.println("{\n id:'" + mesa + "',\n seats:" + detalles.get("seats") + ",\n x:" + detalles.get("x") + ",\n y:" + detalles.get("y") + "\n}");
             mesasFinal.append("{\n id:'").append(mesa).append("',\n seats:").append(detalles.get("seats"))
@@ -60,11 +63,29 @@ public class MesasUIController {
         });
 
         System.out.println(mesas);
-        System.out.println("Reservador"+mesaClient.obtenerReservados());
 
-        // Agregar los tableId únicos al modelo si es necesario
+        mesasFinal.append("],\n");
 
+        List<Rsvp> rsvps = mesaClient.obtenerReservados();
+        StringBuilder rsvpsFinal = new StringBuilder();
+        rsvpsFinal.append("rsvp: {");
+        for (Rsvp rsvp : rsvps) {
+            String tableId = rsvp.getSeatId().getTableId().getTableId();
+            int seatNumber = rsvp.getSeatId().getSeatNumber();
+            String customerName = rsvp.getCustomerName();
+            rsvpsFinal.append("  '").append(tableId).append(seatNumber).append("':'").append(customerName).append("',\n");
+        }
+
+        // Eliminar la última coma y salto de línea
+        if (rsvpsFinal.length() > 7) {
+            rsvpsFinal.setLength(rsvpsFinal.length() - 2);
+        }
+
+        rsvpsFinal.append("\n}}");
         mesasFinal.setLength(mesasFinal.length() - 1);
+        mesasFinal.append(rsvpsFinal);
+        System.out.println("Reservador"+rsvpsFinal);
+
         model.addAttribute("mesas", mesasFinal);
         return "mesas/index";
     }
