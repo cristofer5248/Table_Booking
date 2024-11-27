@@ -1,3 +1,4 @@
+let seatselected="AA"
 /*var cfg = {
     tables: [
       {
@@ -87,6 +88,37 @@ $(document).on('click', '.seat', function() {
       console.log("Este asiento no se puede reservar."); // Muestra mensaje para asientos reservados
   } else {
       var seatId = $(this).data('seat-id');
+      seatselected= seatId;
+    $('#exampleModal').modal('toggle');
       console.log("Asiento disponible:", seatId); // Muestra el ID del asiento si está disponible
   }
+
 });
+
+function bookSeat(){
+  console.log(seatselected);
+  const passbookValue = $('#passbook').val(); // Obtén el valor del input
+  $.ajax({
+    url: '/bookSeat', // URL del endpoint en el controlador
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+      passbook: passbookValue,
+      seat: seatselected
+    }),
+    success: function(response) {
+      $('#exampleModal').modal('hide');
+      FancyAlerts.show({msg: response})
+      console.log("Respuesta del servidor:", response);
+      setTimeout(() => location.reload(), 3000)
+
+
+    },
+    error: function(error) {
+      $('#exampleModal').modal('hide');
+      console.log(error.responseText);
+      FancyAlerts.show({msg: error.responseText,type: 'error'})
+    }
+  });
+
+}

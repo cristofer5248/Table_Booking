@@ -1,14 +1,9 @@
 package com.chrisgeek.Edge.Service.interfaces;
 
-import com.chrisgeek.Edge.Service.entities.Car;
-import com.chrisgeek.Edge.Service.entities.Mesa;
-import com.chrisgeek.Edge.Service.entities.Rsvp;
-import com.chrisgeek.Edge.Service.entities.Seat;
+import com.chrisgeek.Edge.Service.entities.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,5 +36,39 @@ public interface CarClient {
     @GetMapping("/verReservados")
     @CrossOrigin
     List<Rsvp> obtenerReservados();
+
+    @GetMapping("/rsvps/{id}")
+    @CrossOrigin
+    Rsvp obtenerRsvp(@PathVariable("id") Integer id);
+
+    @PostMapping("/guardarrsvp")
+    @CrossOrigin
+    String guardarRsvp(@RequestBody Rsvp rsvp);
+
+    @PutMapping("/rsvps/{id}")
+    @CrossOrigin
+    Rsvp actualizarRsvp(@PathVariable("id") Long id,@RequestBody Rsvp rsvp);//no sirve creo
+
+    @PostMapping("/rsvps")
+    @CrossOrigin
+    Rsvp saveRsvp(@RequestBody Rsvp rsvp);
+
+    @GetMapping("/claves/search/findByClave")
+    @CrossOrigin
+    Clave buscarclave(@RequestParam("nombre") String name);
+
+    @PutMapping("/claves/{id}")
+    @CrossOrigin
+    void actualizarClave(@PathVariable("id") Long id,@RequestBody Clave clave);
+
+    @GetMapping("/clavesbyclave?clave{clave}")
+    @CrossOrigin
+    Clave obtenerClave(@RequestParam("clave") String name);
+
+    @PutMapping("/seats/{id}")
+    void actualizarAsiento(@PathVariable("id") Long id, @RequestBody Seat seat);
+
+    @GetMapping("/buscarSeat/{id}")
+    Seat buscarMesaPorId(@PathVariable("id") String id);
 }
 

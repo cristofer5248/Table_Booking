@@ -31,6 +31,9 @@ public class Seat {
 
     private boolean reserved;
 
+    @Column(name = "bookedby")
+    private String bookedBy;
+
 //    @OneToMany(mappedBy = "Id")
 //    @JsonBackReference
 //    private List<Rsvp> rsvps;

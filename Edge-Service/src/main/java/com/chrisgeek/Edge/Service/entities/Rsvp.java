@@ -13,8 +13,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Rsvp {
 
+
+
     @Id
-    @GeneratedValue (strategy = GenerationType.SEQUENCE)
+    @GeneratedValue (strategy = GenerationType.AUTO)
     @Column(name = "rsvp_id")
     private Long Id;
 
@@ -26,6 +28,27 @@ public class Rsvp {
     @Column(name ="customer_name", length = 100)
     private String customerName;
 
+    public Long getId() {
+        return Id;
+    }
 
+    public void setId(Long id) {
+        Id = id;
+    }
 
+    public Seat getSeatId() {
+        return seatId;
+    }
+
+    public void setSeatId(Seat seatId) {
+        this.seatId = seatId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 }

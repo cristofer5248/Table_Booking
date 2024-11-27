@@ -3,16 +3,19 @@ package com.chrisgeek.Edge.Service.controller;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.chrisgeek.Edge.Service.entities.Mesa;
+import com.chrisgeek.Edge.Service.entities.Clave;
 import com.chrisgeek.Edge.Service.entities.Rsvp;
 import com.chrisgeek.Edge.Service.entities.Seat;
 import com.chrisgeek.Edge.Service.interfaces.CarClient;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @CrossOrigin
@@ -24,6 +27,8 @@ public class MesasUIController {
     public MesasUIController(CarClient mesaClient) {
         this.mesaClient = mesaClient;
     }
+
+
 
     @GetMapping("/vermesasDisponibles")
     public String mesasDisponibles(Model model){
@@ -96,5 +101,54 @@ public class MesasUIController {
 //                !mesa.getName().equals("Triumph Stag") &&
 //                !mesa.getName().equals("Ford Pinto") &&
 //                !mesa.getName().equals("Yugo GV");
+    }
+    @PostMapping("/bookSeat")
+    public ResponseEntity<String> bookSeat(@RequestBody Map<String, String> requestData) {
+        String passbook = requestData.get("passbook");
+        String seat = requestData.get("seat");
+
+        Clave clave = new Clave();
+        try {
+            mesaClient.buscarclave(passbook);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: No se encontró la clave para el passbook proporcionado.");
+        }
+
+        System.out.println("mostrando clave: "+ clave);
+        if (clave == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: No se encontró la clave o ya fue usada.");
+        }
+        Seat seatbooked = mesaClient.buscarMesaPorId(seat);
+        System.out.println("mostrando seatbooked" + seatbooked);
+        if (seatbooked == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: No se encontró ese asiento proporcionado.");
+        }
+
+        Seat seatfinal = new Seat();
+        seatfinal.setReserved(true);
+        seatfinal.setBookedBy(clave.getUsuario());
+        seatfinal.setSeatNumber(seatbooked.getSeatNumber());
+        System.out.println("/buscarSeat/"+seatbooked.getId());
+        try {
+            mesaClient.actualizarAsiento(seatbooked.getId(), seatfinal);
+            //ya teniamos la mesa asi que obtenemos el id para buscar en rsvp
+            Rsvp rsvp_ = new Rsvp();
+            rsvp_.setCustomerName(clave.getUsuario());
+            rsvp_.setSeatId(seatbooked);
+            System.out.println("Mi rsvp nuevo "+rsvp_);
+            mesaClient.guardarRsvp(rsvp_);
+            Clave claveupdate = mesaClient.obtenerClave(passbook);
+            claveupdate.setUsada(1);
+            mesaClient.actualizarClave(claveupdate.getId(),claveupdate);
+
+        } catch (Exception e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+
+
+
+        return ResponseEntity.ok("Reservación procesada con éxito");
     }
 }
